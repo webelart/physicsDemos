@@ -20,7 +20,7 @@
 
         setTimeout(function () {
             startAnimate();
-        }, 3000);
+        }, 1500);
     }
 
     function startAnimate() {
