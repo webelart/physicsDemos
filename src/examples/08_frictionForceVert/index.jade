@@ -1,0 +1,49 @@
+extends ../../layouts/index.jade
+
+block head-title
+    | - animation an object
+
+block styles
+    link(href="style.css", rel="stylesheet")
+    link(href='http://fonts.googleapis.com/css?family=Marck+Script&subset=latin,cyrillic' rel='stylesheet' type='text/css')
+
+block scripts
+    script(src='main.js')
+
+block content
+    article.Story
+        .Story-wrapper
+            section.Story-introduction
+                h1.Story-title Стихотворение<br>про котёнка
+                .Story-preview
+
+            section.Story-part.Story-part1
+                p 
+                    | Как хорошо, когда живёт<br>
+                    | Котёнок в доме вашем.<br>
+                    | Тогда не скучно вам вдвоём<br>
+                    | И мрак ночной не страшен.
+                
+                p 
+                    | И днём вам радостно играть<br>
+                    | С пушистым непоседой.<br>
+                    | И на диване c ним лежать,<br>
+                    | Вздремнув после обеда.
+                img.Story-image.Story-image1(src="img/02.jpg")
+                img.Story-image.Story-image2(src="img/03.jpg")
+
+            section.Story-part.Story-part2
+                p
+                    | А если в двери постучит<br>
+                    | К вам кто-то незнакомый,<br>
+                    | То вам пугаться ни к чему —<br>
+                    | Ведь не один вы дома.
+
+                p 
+                    | Котёнок мягоньким бочком<br>
+                    | К вам ласково прижмётся,<br>
+                    | И вы поймёте — вместе с ним<br>
+                    | Чудеснее живётся!
+                img.Story-image.Story-image3(src="img/04.jpg")
+                img.Story-image.Story-image4(src="img/06.jpg")
+                img.Story-image.Story-image5(src="img/07.jpg")

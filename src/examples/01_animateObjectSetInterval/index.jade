@@ -1,0 +1,14 @@
+extends ../../layouts/index.jade
+
+block head-title
+    | - animation an object
+
+block styles
+    link(href="style.css", rel="stylesheet")
+
+block scripts
+    script(src='main.js')
+
+block content
+    canvas.canvas#canvas(width=600 height=400)
+    

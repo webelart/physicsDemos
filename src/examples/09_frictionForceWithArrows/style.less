@@ -1,0 +1,157 @@
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font: 35px/1.3em 'Marck Script', cursive, Georgia;
+}
+
+p {
+    margin-bottom: 35px;
+}
+
+.Story {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    &-nav {
+        position: absolute;
+        top: 50%;
+        z-index: 9;
+        width: 128px;
+        height: 128px;
+        margin-top: -64px;
+        cursor: pointer;
+        background-repeat: no-repeat; 
+        opacity: 0.7;
+        transition: opacity 0.3s;
+        backface-visibility: hidden;
+        
+        &Prev {
+            left: 0;
+            background-image: url(img/prev.png);
+        }
+
+        &Next {
+            right: 0;
+            background-image: url(img/next.png);
+        }
+
+        &Dis {
+            opacity: 0.2;
+            cursor: default;
+        }
+    }
+
+    &-wrapper {
+        display: flex;
+        width: 300vw;
+        cursor: pointer;
+
+        * {
+            pointer-events: none;
+        }
+    }
+
+    &-introduction,
+    &-part {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    &-introduction {
+        background: rgb(224, 1, 1);
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-flow: column wrap;
+        backface-visibility: hidden;
+        z-index: 3;
+        cursor: pointer;
+    }
+
+    &-title {
+        font-size: 65px;
+        color: #fff;
+        line-height: 0.9em;
+        padding-bottom: 50px;
+    }
+
+    &-preview {
+        position: relative;
+        width: 64vh;
+        height: 64vh;
+        max-width: 500px;
+        max-height: 500px;
+        background: url('img/01.png') no-repeat center center;
+        background-color: #000;
+        background-size: cover;
+        border-radius: 50%;
+        box-shadow: 0px 0px 27px #000 inset;
+    }
+
+    &-part {
+        position: relative;
+        display: block;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-flow: column wrap;
+
+        &1 {
+            z-index: 2;
+        }
+
+        &2 {
+            z-index: 1;
+            
+        }
+    }
+
+    &-image {
+        position: absolute;
+        z-index: -1;
+        border-radius: 50%;
+        display: inline-block;
+        width: 25vw;
+        height: 25vw;
+        pointer-events: none;
+        
+        &1 {
+            bottom: 4vw;
+            right: 4vw;
+            width: 18vw;
+            height: 18vw;
+        }
+
+        &2 {
+            top: 4vw;
+            left: 4vw;
+        }
+
+        &3 {
+            top: 4vw;
+            left: 4vw;
+            width: 22vw;
+            height: 22vw;
+        }
+
+        &4 {
+            top: 25vh;
+            right: 7vw;
+            width: 20vw;
+            height: 20vw;
+        }
+
+        &5 {
+            bottom: 2vw;
+            left: 18vw;
+            width: 15vw;
+            height: 15vw;
+        }
+
+    }
+}
