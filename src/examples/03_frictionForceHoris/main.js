@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     var $obj = $('.Story-wrapper');
     var $body = $('body');
 
@@ -7,7 +7,7 @@
     var winH = $(window).height();
     var objW = $obj.width();
 
-    $(window).resize(function() {
+    $(window).resize(function () {
         winW = $(window).width();
         winH = $(window).height();
         objW = $obj.width();

@@ -104,6 +104,10 @@
             return new Vector2D(k * this.x, k * this.y);
         },
 
+        devide: function (vec) {
+            return new Vector2D(this.x / vec.x, this.y / vec.y);
+        },
+
         addScaled: function (vec, k) {
             return new Vector2D(this.x + k * vec.x, this.y + k * vec.y);
         },
@@ -152,6 +156,7 @@
             }
             return vec;
         },
+
         perp: function (u, anticlockwise) {
             if (typeof(anticlockwise) === 'undefined') {
                 anticlockwise = true;
@@ -174,14 +179,14 @@
     // STATIC METHODS
     Vector2D.distance =  function (vec1, vec2) {
         return (vec1.subtract(vec2)).length();
-    }
+    };
     Vector2D.angleBetween = function (vec1, vec2) {
         return Math.acos(vec1.dotProduct(vec2) / (vec1.length() * vec2.length()));
-    }
+    };
     Vector2D.scale = function (vec, sca) {
         vec.x *= sca;
         vec.y *= sca;
-    }
+    };
     Vector2D.vector2D = function (mag, angle, clockwise) {
         if (typeof(clockwise) === 'undefined') {
             clockwise = true;
@@ -193,7 +198,7 @@
             vec.y *= -1;
         }
         return vec;
-    }
+    };
 
     window.Vector2D = Vector2D;
 } (window));

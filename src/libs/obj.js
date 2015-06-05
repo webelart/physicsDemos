@@ -6,6 +6,7 @@
         this.h = this.checkProperty(ops.h, 20);
         this.mass = this.checkProperty(ops.mass, 1);
         this.charge = this.checkProperty(ops.charge, 0);
+        this.radius = this.checkProperty(ops.radius, 0);
         this.x = 0;
         this.y = 0;
         this.vx = 0;
