@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     var $obj = $('.Story-wrapper');
     var $body = $('body');
 
@@ -11,7 +11,7 @@
     var winH = $(window).height();
     var objW = $obj.width();
 
-    $(window).resize(function() {
+    $(window).resize(function () {
         winW = $(window).width();
         winH = $(window).height();
         objW = $obj.width();
@@ -61,7 +61,7 @@
     }
 
     function startEventsNav() {
-        $navPrev.on('mousedown', function() {
+        $navPrev.on('mousedown', function () {
             direction = 'firstSide';
             applyThrust = true;
             isPositive = true;
@@ -69,7 +69,7 @@
             startAnim();
         });
 
-        $navNext.on('mousedown', function() {
+        $navNext.on('mousedown', function () {
             direction = 'secondSide';
             applyThrust = true;
             isPositive = false;
