@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     var $body = $('body');
     var winW = $(window).width();
     var winH = $(window).height();
@@ -29,7 +29,7 @@
     var acc;
     var force;
     var animId;
-    var cDamping = 2;
+    var cDamping = 0.2;
     var isMoving = false;
 
     function getCenter() {
@@ -86,22 +86,10 @@
         $cover.css('transform', 'translate3d(' + obj.x + 'px, ' + obj.y + 'px, 0)');
     }
 
-    function revertDamping() {
-
-    }
-
     function getDamping(displ) {
         var restoring = Forces.spring(stretchKSpring, displ);
         var damping = Forces.damping(stretchCDamping, restoring);
         return damping;
-    }
-
-    function move() {
-        isMoving = true;
-        moveObject(obj);
-        calcForce();
-        updateAccel();
-        updateVelo(obj);
     }
 
     function animFrame() {
@@ -111,7 +99,7 @@
 
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.001 * (t1 - t0);
+        dt = 0.005 * (t1 - t0);
         t0 = t1;
 
         if (dt > 0.2) {
@@ -119,6 +107,14 @@
         }
 
         move();
+    }
+
+    function move() {
+        isMoving = true;
+        moveObject(obj);
+        calcForce();
+        updateAccel();
+        updateVelo(obj);
     }
 
     function moveObject(obj) {
@@ -134,10 +130,12 @@
 
     function calcForce() {
         displ = obj.pos2D.subtract(centerPosition);
+
         var restoring = Forces.spring(kSpring, displ);
         var damping = Forces.damping(cDamping, obj.velo2D);
 
         force = Forces.add([restoring, damping]);
+
     }
 
     function updateAccel() {
@@ -145,7 +143,7 @@
     }
 
     function updateVelo(obj) {
-        obj.velo2D = obj.velo2D.addScaled(acc, dt);
+        obj.velo2D = obj.velo2D.add(acc, dt);
     }
 
     function stopAnimate() {

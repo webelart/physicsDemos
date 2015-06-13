@@ -1,4 +1,4 @@
-;(function() {
+;(function () {
     var $body = $('body');
 
     var $container = $('.Logos');
@@ -27,7 +27,7 @@
 
     function events() {
         getCenters();
-        $(window).resize(function() {
+        $(window).resize(function () {
             getCenters();
         });
     }
@@ -40,7 +40,7 @@
             var coverWH = $cover.width() / 2;
             var coverHH = $cover.height() / 2;
 
-            centres.push({ x: offsets.left + coverWH, y: offsets.top + coverHH});
+            centres.push({x: offsets.left + coverWH, y: offsets.top + coverHH});
         }
     }
 
@@ -81,14 +81,4 @@
     }
 
 }());
-
-
-
-
-
-
-
-
-
-
 

@@ -62,20 +62,11 @@
         calcForce();
         updateAccel();
         updateVelo();
-        checkBounce();
     }
 
     function moveObject() {
         obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
         obj.changeStyles();
-    }
-
-    function checkBounce() {
-        var displ = floor.subtract(obj.pos2D);
-        if (displ.y - obj.radius <= 0) {
-            obj.y = floor.y - obj.radius;
-            obj.vy *= -vfac;
-        }
     }
 
     function calcForce() {

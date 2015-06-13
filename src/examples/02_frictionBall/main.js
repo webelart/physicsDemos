@@ -18,9 +18,8 @@
     var force;
     var acc;
     var g = 10;
-    var k = 1;
 
-    var powerLossFactor = 0.2;
+    var powerLossFactor = 2;
     var powerApplied = 50;
     var ke;
     var vmag;

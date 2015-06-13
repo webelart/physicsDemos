@@ -28,7 +28,7 @@
 
         createObjs: function () {
             this.obj = new Obj(this.$el.width(), this.$el.height(), this.m, 0);
-            this.obj.velo2D = new Vector2D(0, 0);
+            this.obj.velo2D = new Vector2D(600, 0);
 
             this.$el.on('mousedown', this.mouseDown.bind(this));
             $.Window.on('mouseMove', this.mouseMove.bind(this));
@@ -188,7 +188,7 @@
         stretchCDamping: 0.6,
         stretchKSpring: 0.8,
         kSpring: 10,
-        cDamping: 2
+        cDamping: 0.7
     };
 
     window.onload = function () {
@@ -196,5 +196,5 @@
         var $covers = $logos.find('.Logos-cover');
 
         $covers.oscilationObject();
-    }
+    };
 }());

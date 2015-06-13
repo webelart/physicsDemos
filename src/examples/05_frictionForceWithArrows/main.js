@@ -30,7 +30,7 @@
     var k = 0.5;
 
     var powerLossFactor = 1;
-    var powerApplied = 70000;
+    var powerApplied = 200000;
     var ke;
     var vmag;
     var mass;

@@ -1,4 +1,4 @@
-;(function(window) {
+;(function (window) {
     var Particle = function(mass, charge) {
         if (typeof(mass) === 'undefined') {
             mass = 1;

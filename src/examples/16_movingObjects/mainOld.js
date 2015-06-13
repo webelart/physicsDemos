@@ -4,7 +4,7 @@
 
     var sizeEl = 50;
     var objs = [];
-    var timer;
+    var animId;
     var allInHome;
     var cursorForceZoomed = 300000;
     var damping = 0.85;
@@ -15,6 +15,7 @@
 
     var winW = $(window).width();
     var winH = $(window).height();
+    var t0 = 0;
 
     window.onload = events();
 
@@ -45,7 +46,7 @@
             .on('mousemove', mouseMove)
             .on('mouseleave', mouseEnd);
 
-        start();
+        animFrame();
     }
 
     function createEls() {
@@ -90,17 +91,35 @@
         allInHome = false;
     }
 
+    function animFrame() {
+        animId = requestAnimationFrame(animFrame);
+        onTimer();
+        console.log(1)
+    }
+
+    function stopAnimate() {
+        cancelAnimationFrame(animId);
+    }
+
     function start() {
         if (timer) {
             return;
         }
-        timer = setInterval(onTimer, 30);
+
+        animFrame();
+    }
+
+    function move() {
+        moveObject(obj);
+        calcForce();
+        updateAccel();
+        updateVelo(obj);
     }
 
     function onTimer() {
         if (!objs || objs.length == 0) {
             return;
-            clearInterval(timer);
+            stopAnimate();
         }
         if (!allInHome) {
             moveObjs();
