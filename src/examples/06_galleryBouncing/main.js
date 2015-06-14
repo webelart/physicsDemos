@@ -40,8 +40,8 @@
                         params.mass = 10;
 
                         _this.objs.push(new Obj(params));
-                        _this.objs[j].pos2D = new Vector2D(0, -_this.winH);
-                        _this.objs[j].floor = new Vector2D(0, 0);
+                        _this.objs[j].pos = new Vector(0, -_this.winH);
+                        _this.objs[j].floor = new Vector(0, 0);
                         _this.objs[j].isDragging = false;
                         _this.objs[j].changeStyles();
 
@@ -81,7 +81,7 @@
             this.dt = 0.001 * (t1 - this.t0);
             this.t0 = t1;
 
-            if (this.dt > 0.2) {
+            if (this.dt > 0.5) {
                 this.dt = 0;
             }
 
@@ -139,13 +139,13 @@
 
         moveObject: function (obj) {
             if (!obj.isDragging) {
-                obj.pos2D = obj.pos2D.addScaled(obj.velo2D, this.dt);
+                obj.pos = obj.pos.addScaled(obj.velo, this.dt);
                 obj.changeStyles();
             }
         },
 
         checkBounce: function (obj) {
-            var displ = obj.floor.subtract(obj.pos2D);
+            var displ = obj.floor.subtract(obj.pos);
             if (displ.y <= 0) {
                 obj.y = obj.floor.y;
                 obj.vy *= -this.vfac;
@@ -153,7 +153,7 @@
         },
 
         calcForce: function (obj) {
-            obj.force = new Vector2D(0, obj.mass * this.g - this.k * obj.vy);
+            obj.force = new Vector(0, obj.mass * this.g - this.k * obj.vy);
             if (obj.slideToUp) {
                 obj.force.negate();
             }
@@ -164,7 +164,7 @@
         },
 
         updateVelo: function (obj) {
-            obj.velo2D = obj.velo2D.addScaled(obj.acc, this.dt);
+            obj.velo = obj.velo.addScaled(obj.acc, this.dt);
         }
     };
 

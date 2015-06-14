@@ -14,13 +14,13 @@
             $el: $ball
         });
 
-        obj.pos2D = new Vector2D(10, 0);
-        obj.velo2D = new Vector2D(60, 0);
-        obj.end2D = new Vector2D(contW - 15 - $ball.width(), 0);
+        obj.pos = new Vector(10, 0);
+        obj.velo = new Vector(60, 0);
+        obj.end = new Vector(contW - 10 - $ball.width(), 0);
 
-        setTimeout(function () {
-            startAnimate();
-        }, 1500);
+        // setTimeout(function () {
+        startAnimate();
+        // }, 3000);
     }
 
     function startAnimate() {
@@ -34,21 +34,30 @@
 
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.001 * (t1 - t0);
+        dt = t1 - t0;
+
+        if (dt > 15) {
+            dt = 15;
+        }
+
+        dt *= 0.004;
         t0 = t1;
+
         if (dt > 0.2) {
-            dt = 0;
-        };
+            dt = 0; // Фиксит баг когда переходим в другую вкладку.
+        }
         move();
     }
 
     function move() {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
-        obj.changeStyles();
-
-        if (obj.pos2D.greater(obj.end2D)) {
+        if (obj.pos.greater(obj.end)) {
+            obj.pos = obj.end;
             stopAnimate();
+        } else {
+            obj.pos = obj.pos.addScaled(obj.velo, dt);
         }
+
+        obj.changeStyles();
     }
 }());
 

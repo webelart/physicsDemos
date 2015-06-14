@@ -6,10 +6,11 @@
     var objs = [];
     var animId;
     var allInHome;
-    var mouseForceZoomed = 50000;
+    var cursorForceZoomed = 50000;
     var damping = 0.85;
     var inHome = 0;
     var m = 1;
+    var kSpring = 1;
     var acc;
     var dt;
 
@@ -20,12 +21,10 @@
     var homeForce;
     var homeDistance;
     var homeDistanceReverse;
-    var mouseForce;
-    var mouseDistance;
+    var cursorForce;
+    var cursorDistance;
 
-    var cursorPos2D = new Vector2D(0, 0);
-
-    var mousePos = new Vector2D(-1, -1);
+    var cursorPos = new Vector(-1, -1);
 
     var winW = $(window).width();
     var winH = $(window).height();
@@ -83,12 +82,12 @@
 
                 // Задаем объект и рисуем положение объекта
                 var newObj = new Obj({$el: $obj});
-                newObj.pos2D = new Vector2D(x, y);
-                newObj.home2D = new Vector2D(x, y);
-                newObj.velo2D = new Vector2D(0, 0);
+                newObj.pos = new Vector(x, y);
+                newObj.home = new Vector(x, y);
+                newObj.velo = new Vector(0, 0);
                 newObj.changeStyles();
-                newObj.force = new Vector2D(0, 0);
-                newObj.acc = new Vector2D(0, 0);
+                newObj.force = new Vector(0, 0);
+                newObj.acc = new Vector(0, 0);
 
                 objs.push(newObj);
             }
@@ -98,12 +97,12 @@
     }
 
     function mouseMove(evt) {
-        mousePos = new Vector2D(evt.pageX, evt.pageY);
+        cursorPos = new Vector(evt.pageX, evt.pageY);
         allInHome = false;
     }
 
     function mouseEnd() {
-        mousePos = new Vector2D(-1, -1);
+        cursorPos = new Vector(-1, -1);
         allInHome = false;
     }
 
@@ -159,29 +158,29 @@
     }
 
     function moveObjs(obj) {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
 
         // Обновление стилей
         obj.changeStyles();
     }
 
     function calcForce(obj) {
-        displObj = obj.pos2D.subtract(obj.home2D);
+        displObj = obj.pos.subtract(obj.home);
 
-        mouseForce = new Vector2D(0, 0);
+        cursorForce = new Vector(0, 0);
 
-        if (mousePos.x >= 0) {
-            displCursor = obj.pos2D.subtract(mousePos);
-            mouseDistance = displCursor.length();
-            if (mouseDistance > 1 && mouseDistance <= mouseForceZoomed) {
-                mouseForce = displCursor.multiply(mouseForceZoomed / (mouseDistance * mouseDistance));
+        if (cursorPos.x >= 0) {
+            displCursor = obj.pos.subtract(cursorPos);
+            cursorDistance = displCursor.length();
+            if (cursorDistance > 1 && cursorDistance <= cursorForceZoomed) {
+                cursorForce = displCursor.multiply(0.5);
             }
         }
 
         // Обновление скорости
-        var objForce = Forces.spring(1, displObj);
+        var restoring = displObj.multiply(-kSpring);
 
-        obj.force = Forces.add([objForce, mouseForce]);
+        obj.force = Vector.add([restoring, cursorForce]);
     }
 
     function updateAccel(obj) {
@@ -189,8 +188,8 @@
     }
 
     function updateVelo(obj) {
-        obj.velo2D = obj.velo2D.addScaled(obj.acc, dt);
-        obj.velo2D = obj.velo2D.multiply(damping);
+        obj.velo = obj.velo.addScaled(obj.acc, dt);
+        obj.velo = obj.velo.multiply(damping);
     }
 
     function checkObj(obj) {
@@ -199,8 +198,8 @@
             Math.abs(obj.vx) < 0.5 &&
             Math.abs(obj.vy) < 0.5) {
 
-            obj.velo2D = new Vector2D(0, 0);
-            obj.pos2D = new Vector2D(obj.hx, obj.hy);
+            obj.velo = new Vector(0, 0);
+            obj.pos = new Vector(obj.hx, obj.hy);
             inHome++;
         }
     }

@@ -28,8 +28,8 @@
             radius: 100
         });
 
-        obj.pos2D = new Vector2D(winW / 2 - obj.radius, 0);
-        floor = new Vector2D(winW / 2 - obj.radius, winH - floorH);
+        obj.pos = new Vector(winW / 2 - obj.radius, 0);
+        floor = new Vector(0, winH - floorH);
         obj.changeStyles();
     }
 
@@ -66,12 +66,12 @@
     }
 
     function moveObject() {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
         obj.changeStyles();
     }
 
     function checkBounce() {
-        var displ = floor.subtract(obj.pos2D);
+        var displ = floor.subtract(obj.pos);
         if (displ.y - obj.radius <= 0) {
             obj.y = floor.y - obj.radius;
             obj.vy *= -vfac;
@@ -79,14 +79,14 @@
     }
 
     function calcForce() {
-        force = new Vector2D(0, mass * g - k * obj.vy);
+        force = new Vector2D(0, obj.mass * g - k * obj.vy);
     }
 
     function updateAccel() {
-        acc = force.multiply(1 / mass);
+        acc = force.multiply(1 / obj.mass);
     }
 
     function updateVelo() {
-        obj.velo2D = obj.velo2D.addScaled(acc, dt);
+        obj.velo = obj.velo.addScaled(acc, dt);
     }
 }());

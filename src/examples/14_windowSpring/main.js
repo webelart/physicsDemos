@@ -32,18 +32,19 @@
 
     function getCenter() {
         var offPosition = $cover.offset();
-        return new Vector2D(offPosition.left, offPosition.top);
+        return new Vector(offPosition.left, offPosition.top);
     }
 
     window.onload = init;
 
     function init() {
         obj = new Obj({
+            $el: $cover,
             w: $cover.width(),
             h: $cover.height(),
             m: m
         });
-        obj.velo2D = new Vector2D(0, 0);
+        obj.velo = new Vector(0, 0);
 
         $cover.on('mousedown', mouseDown);
         $cover.on('mousemove', mouseMove);
@@ -51,9 +52,9 @@
     };
 
     function mouseDown(evt) {
-        stretchFirstPosition = new Vector2D(0, evt.pageY);
+        stretchFirstPosition = new Vector(0, evt.pageY);
         stretchMoving = true;
-        stretchIsFirstPos = obj.pos2D;
+        stretchIsFirstPos = obj.pos;
 
         stopAnimate();
     }
@@ -63,7 +64,7 @@
             return false;
         }
 
-        var stretchMovingPosition = new Vector2D(0, evt.pageY);
+        var stretchMovingPosition = new Vector(0, evt.pageY);
         stretchForce = stretchFirstPosition.subtract(stretchMovingPosition);
         stretchCalcForce();
 
@@ -83,18 +84,14 @@
         var displ = stretchForce;
         var damping = getDamping(displ).multiply(-1);
 
-        obj.pos2D = damping.add(stretchIsFirstPos);
+        obj.pos = damping.add(stretchIsFirstPos);
 
-        $cover.css('transform', 'translate3d(' + obj.x + 'px, ' + obj.y + 'px, 0)');
-    }
-
-    function revertDamping() {
-
+        obj.changeStyles();
     }
 
     function getDamping(displ) {
-        var restoring = Forces.spring(stretchKSpring, displ);
-        var damping = Forces.damping(stretchCDamping, restoring);
+        var restoring = displ.multiply(stretchKSpring);
+        var damping = restoring.multiply(stretchCDamping);
         return damping;
     }
 
@@ -124,22 +121,25 @@
     }
 
     function moveObject(obj) {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
 
         if (Math.round(obj.x) === 0 && Math.round(obj.y) === 0) {
-            obj.pos2D = new Vector2D(0, 0);
+            obj.pos = new Vector(0, 0);
             stopAnimate();
         }
 
-        $cover.css('transform', 'translate3d(' + obj.x + 'px, ' + obj.y + 'px, 0)');
+        obj.changeStyles();
     }
 
     function calcForce() {
-        displ = obj.pos2D.subtract(centerPosition);
-        var restoring = Forces.spring(kSpring, displ);
-        var damping = Forces.damping(cDamping, obj.velo2D);
+        displ = obj.pos.subtract(centerPosition);
+        var restoring = displ.multiply(-kSpring);
+        var damping = obj.velo.multiply(-cDamping);
 
-        force = Forces.add([restoring, damping]);
+        force = new Vector(0, 0);
+        force.incrementBy(restoring);
+        force.incrementBy(damping);
+
     }
 
     function updateAccel() {
@@ -147,7 +147,7 @@
     }
 
     function updateVelo(obj) {
-        obj.velo2D = obj.velo2D.addScaled(acc, dt);
+        obj.velo = obj.velo.addScaled(acc, dt);
     }
 
     function stopAnimate() {

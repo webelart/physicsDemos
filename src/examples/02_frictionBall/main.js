@@ -19,7 +19,7 @@
     var acc;
     var g = 10;
 
-    var powerLossFactor = 2;
+    var powerLossFactor = 4;
     var powerApplied = 50;
     var ke;
     var vmag;
@@ -33,25 +33,29 @@
 
     function init() {
         obj = new Obj({
-            m: m,
+            mass: m,
             $el: $obj,
             radius: 100
         });
 
-        obj.pos2D = new Vector2D(0, 0);
-        obj.velo2D = new Vector2D(0, 0);
+        obj.pos = new Vector(0, 0);
+        obj.velo = new Vector(0, 0);
 
         obj.changeStyles();
 
         mass = obj.mass;
-        vmag = obj.velo2D;
-        ke = new Vector2D(0.5 * mass * obj.velo2D.x * obj.velo2D.x, 0.5 * mass * obj.velo2D.y * obj.velo2D.y);
+        vmag = obj.velo;
+        ke = new Vector(0.5 * mass * obj.vx * obj.vx, 0.5 * mass * obj.vy * obj.vy);
 
         t0 = new Date().getTime();
 
         $obj.on('mousedown', mouseDown);
         $.Body.add($obj).on('mouseup', mouseUp);
         $.Body.add($obj).on('mousemove', mouseMove);
+
+        $obj.on('touchstart', mouseDown);
+        $.Body.add($obj).on('touchend', mouseUp);
+        $.Body.add($obj).on('touchmove', mouseMove);
     }
 
     function startAnim() {
@@ -65,11 +69,14 @@
 
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.001 * (t1 - t0);
+        dt = t1 - t0;
+
+        dt *= 0.001;
         t0 = t1;
+
         if (dt > 0.2) {
-            dt = 0;
-        };
+            dt = 0; // Фиксит баг когда переходим в другую вкладку.
+        }
         move();
     }
 
@@ -80,15 +87,16 @@
     }
 
     function moveObject() {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
 
         checkObjPos();
         obj.changeStyles();
     }
 
     function applyPower() {
-        ke = ke.subtract(new Vector2D(powerLossFactor * obj.velo2D.x * obj.velo2D.x * dt,
-                                      powerLossFactor * obj.velo2D.y * obj.velo2D.y * dt));
+        var powerLoss = new Vector(powerLossFactor * obj.vx * obj.vx * dt,
+                                   powerLossFactor * obj.vy * obj.vy * dt);
+        ke = ke.subtract(powerLoss);
 
         if (Math.round(ke.x) <= 1 && Math.round(ke.y) <= 1) {
             stopAnimate();
@@ -96,17 +104,17 @@
     }
 
     function updateVelo() {
-        obj.velo2D = new Vector2D(Math.sqrt(2 * ke.x / mass), Math.sqrt(2 * ke.y / mass));
-        obj.vy = (isPositive.y) ? obj.velo2D.y : -obj.velo2D.y;
-        obj.vx = (isPositive.x) ? obj.velo2D.x : -obj.velo2D.x;
+        obj.velo = new Vector(Math.sqrt(2 * ke.x / mass), Math.sqrt(2 * ke.y / mass));
+        obj.vy = (isPositive.y) ? obj.vy : -obj.vy;
+        obj.vx = (isPositive.x) ? obj.vx : -obj.vx;
     }
 
     function mouseDown(evt) {
         stopAnimate();
         t0 = new Date().getTime();
-        obj.pos0 = obj.pos2D;
+        obj.pos0 = obj.pos;
         isDragging = true;
-        innerVector = new Vector2D(evt.offsetX, evt.offsetY);
+        innerVector = getXY(evt, 'offset');
     }
 
     function mouseUp() {
@@ -123,26 +131,43 @@
             return;
         }
 
-        var oldPos = obj.pos2D;
-        var mousePos = new Vector2D(evt.pageX, evt.pageY);
+        var oldPos = obj.pos;
+        var mousePos = getXY(evt, 'page');
 
-        obj.pos2D = mousePos.subtract(innerVector);
+        obj.pos = mousePos.subtract(innerVector);
 
         checkObjPos();
         obj.changeStyles();
     }
 
     function getVelo() {
-        obj.velo2D = obj.pos2D.subtract(obj.pos0);
-        obj.velo2D = obj.velo2D.multiply(1 / ((t1 - t0) * 0.001));
+        var displ = obj.pos.subtract(obj.pos0);
+        obj.velo = displ.divide((t1 - t0) * 0.001);
 
         t0 = new Date().getTime();
 
         setPositive();
 
-        ke = new Vector2D(0.5 * mass * obj.velo2D.x * obj.velo2D.x,
-                          0.5 * mass * obj.velo2D.y * obj.velo2D.y);
+        ke = new Vector(0.5 * obj.mass * obj.vx * obj.vx,
+                        0.5 * obj.mass * obj.vy * obj.vy);
         startAnim();
+    }
+
+    function getXY(evt, param) {
+        var touch;
+        if ($.isTouch) {
+            touch = evt.originalEvent.touches[0] || evt.originalEvent.changedTouches[0];
+        }
+
+        var x = $.isTouch ? touch.pageX : evt[param + 'X'];
+        var y = $.isTouch ? touch.pageY : evt[param + 'Y'];
+
+        if ($.isTouch && param === 'offset') {
+            x -= obj.$el.offset().left;
+            y -= obj.$el.offset().top;
+        }
+
+        return new Vector(x, y);
     }
 
     function setPositive() {
@@ -160,7 +185,7 @@
     }
 
     function checkObjPos() {
-        obj.pos2D = obj.pos2D.setBoundaries({minX: 0, maxX: winW}, {minY: 0, maxY: winH}, obj.radius);
+        obj.pos = obj.pos.setBoundaries({minX: 0, maxX: winW}, {minY: 0, maxY: winH}, obj.radius);
     }
 }());
 

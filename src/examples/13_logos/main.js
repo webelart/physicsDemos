@@ -27,8 +27,13 @@
         },
 
         createObjs: function () {
-            this.obj = new Obj(this.$el.width(), this.$el.height(), this.m, 0);
-            this.obj.velo2D = new Vector2D(600, 0);
+            this.obj = new Obj({
+                $el: this.$el,
+                w: this.$el.width(),
+                h: this.$el.height(),
+                mass: this.m
+            });
+            this.obj.velo = new Vector(600, 0);
 
             this.$el.on('mousedown', this.mouseDown.bind(this));
             $.Window.on('mouseMove', this.mouseMove.bind(this));
@@ -36,9 +41,9 @@
         },
 
         mouseDown: function (evt) {
-            this.stretchFirstPosition = new Vector2D(evt.pageX, evt.pageY);
+            this.stretchFirstPosition = new Vector(evt.pageX, evt.pageY);
             this.stretchMoving = true;
-            this.stretchIsFirstPos = this.obj.pos2D;
+            this.stretchIsFirstPos = this.obj.pos;
 
             movingObjects.push(this.$el);
             this.changeZIndexes();
@@ -52,7 +57,7 @@
                 return false;
             }
 
-            var stretchMovingPosition = new Vector2D(evt.pageX, evt.pageY);
+            var stretchMovingPosition = new Vector(evt.pageX, evt.pageY);
             this.stretchForce = this.stretchFirstPosition.subtract(stretchMovingPosition);
             this.stretchCalcForce();
 
@@ -63,13 +68,13 @@
 
         stretchCalcForce: function () {
             var displ = this.stretchForce;
-            var restoring = Forces.spring(this.stretchKSpring, displ);
-            var damping = Forces.damping(this.stretchCDamping, restoring);
 
-            damping = damping.multiply(-1);
-            this.obj.pos2D = damping.add(this.stretchIsFirstPos);
+            var restoring = displ.multiply(-this.stretchKSpring);
+            var damping = restoring.multiply(this.stretchCDamping);
 
-            this.$el.css('transform', 'translate3d(' + this.obj.x + 'px, ' + this.obj.y + 'px, 0)');
+            this.obj.pos = damping.add(this.stretchIsFirstPos);
+
+            this.obj.changeStyles();
         },
 
         mouseUp: function (evt) {
@@ -127,10 +132,10 @@
         },
 
         moveObject: function (obj) {
-            this.obj.pos2D = this.obj.pos2D.addScaled(this.obj.velo2D, this.dt);
+            this.obj.pos = this.obj.pos.addScaled(this.obj.velo, this.dt);
 
             if (Math.round(this.obj.x) === 0 && Math.round(this.obj.y) === 0) {
-                this.obj.pos2D = new Vector2D(0, 0);
+                this.obj.pos = new Vector(0, 0);
 
                 var index = movingObjects.indexOf(this.$el);
                 this.removeZIndex(movingObjects[index]);
@@ -139,15 +144,17 @@
                 this.stopAnimate();
             }
 
-            this.$el.css('transform', 'translate3d(' + obj.x + 'px, ' + obj.y + 'px, 0)');
+            this.obj.changeStyles();
         },
 
         calcForce: function () {
-            var displ = this.obj.pos2D.subtract(this.centerPosition);
-            var restoring = Forces.spring(this.kSpring, displ);
-            var damping = Forces.damping(this.cDamping, this.obj.velo2D);
+            var displ = this.obj.pos.subtract(this.centerPosition);
+            var restoring = displ.multiply(-this.kSpring);
+            var damping = this.obj.velo.multiply(-this.cDamping);
 
-            this.force = Forces.add([restoring, damping]);
+            this.force = new Vector(0, 0);
+            this.force.incrementBy(restoring);
+            this.force.incrementBy(damping);
         },
 
         updateAccel: function () {
@@ -155,7 +162,7 @@
         },
 
         updateVelo: function (obj) {
-            this.obj.velo2D = this.obj.velo2D.addScaled(this.acc, this.dt);
+            this.obj.velo = this.obj.velo.addScaled(this.acc, this.dt);
         }
     };
 

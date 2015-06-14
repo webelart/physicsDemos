@@ -5,7 +5,6 @@
         this.w = this.checkProperty(ops.w, 20);
         this.h = this.checkProperty(ops.h, 20);
         this.mass = this.checkProperty(ops.mass, 1);
-        this.charge = this.checkProperty(ops.charge, 0);
         this.radius = this.checkProperty(ops.radius, 0);
         this.x = 0;
         this.y = 0;
@@ -20,38 +19,38 @@
     };
 
     Obj.prototype = {
-        get home2D () {
-            return new Vector2D(this.hx, this.hy);
+        get home () {
+            return new Vector(this.hx, this.hy);
         },
 
-        set home2D (home) {
+        set home (home) {
             this.hx = home.x;
             this.hy = home.y;
         },
 
-        get pos2D () {
-            return new Vector2D(this.x, this.y);
+        get pos () {
+            return new Vector(this.x, this.y);
         },
 
-        set pos2D (pos) {
+        set pos (pos) {
             this.x = pos.x;
             this.y = pos.y;
         },
 
-        get velo2D () {
-            return new Vector2D(this.vx, this.vy);
+        get velo () {
+            return new Vector(this.vx, this.vy);
         },
 
-        set velo2D (velo) {
+        set velo (velo) {
             this.vx = velo.x;
             this.vy = velo.y;
         },
 
-        get end2D () {
-            return new Vector2D(this.ex, this.ey);
+        get end () {
+            return new Vector(this.ex, this.ey);
         },
 
-        set end2D (end) {
+        set end (end) {
             this.ex = end.x;
             this.ey = end.y;
         },
@@ -79,7 +78,7 @@
         },
 
         changeStyles: function () {
-            this.$el.css(this.prefixJs + 'Transform', 'translate3d(' + this.x + 'px, ' + this.y + 'px, 0');
+            this.$el.css(this.prefixJs + 'Transform', 'translate3d(' + this.x + 'px, ' + this.y + 'px, 0)');
         }
     };
 

@@ -1,13 +1,14 @@
 ;(function () {
-    var $ball = $('.ball');
+    var $obj = $('.ball');
+    var $center = $('.center');
 
+    var obj;
+    var center;
     var winW = $(window).width();
     var winH = $(window).height();
-    var ball;
-    var displ;
-    var center = new Vector2D(0.5 * winW, 0.5 * winH);
+    var obj;
     var m = 1;
-    var kSpring = 10;
+    var kSpring = 5;
     var t0;
     var dt;
     var acc;
@@ -18,14 +19,17 @@
     window.onload = init;
 
     function init() {
-        ball = new Ball(50, '#0000cc', false, m, 0);
-        ball.pos2D = new Vector2D(400, 400);
+        obj = new Obj({
+            $el: $obj,
+            mass: m
+        });
+        obj.pos = new Vector(300, 300);
+        obj.velo = new Vector(0, 0);
 
-        // Добавляем скорость по координате х и объект движется по орбите.
-        ball.velo2D = new Vector2D(0, 0);
-
-        var attractor = new Ball(4, '#000000');
-        attractor.pos2D = center;
+        center = new Obj({
+            $el: $center
+        });
+        center.pos = new Vector(0.5 * winW, 0.5 * winH);
 
         t0 = new Date().getTime();
         animFrame();
@@ -35,6 +39,7 @@
         animId = requestAnimationFrame(animFrame);
         onTimer();
     }
+
     function onTimer() {
         var t1 = new Date().getTime();
         dt = 0.001 * (t1 - t0);
@@ -42,28 +47,30 @@
         if (dt > 0.2) {dt = 0;};
         move();
     }
+
     function move() {
-        moveObject(ball);
+        moveObject();
         calcForce();
         updateAccel();
-        updateVelo(ball);
+        updateVelo();
     }
 
-    function moveObject(obj) {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
-        $ball.css('transform', 'translate3d(' + obj.x + 'px, ' + obj.y + 'px, 0)');
+    function moveObject() {
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
+        obj.changeStyles();
     }
+
     function calcForce() {
-        displ = ball.pos2D.subtract(center);
-        var restoring = Forces.spring(kSpring, displ);
-        var damping = Forces.damping(cDamping, ball.velo2D);
-        force = Forces.add([restoring, damping]);
+        var displ = obj.pos.subtract(center.pos);
+        force = displ.multiply(-kSpring);
     }
+
     function updateAccel() {
-        acc = force.multiply(1 / m);
+        acc = force.divide(obj.mass);
     }
-    function updateVelo(obj) {
-        obj.velo2D = obj.velo2D.addScaled(acc, dt);
+
+    function updateVelo() {
+        obj.velo = obj.velo.addScaled(acc, dt);
     }
 
 }());

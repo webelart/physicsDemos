@@ -1,15 +1,15 @@
 ;(function () {
     var $obj = $('.Story-wrapper');
-    var $body = $('body');
-
     var $navPrev = $('.Story-navPrev');
     var $navNext = $('.Story-navNext');
+    var $body = $('body');
     var disNavClass = 'Story-navDis';
 
     var isDragging = false;
     var winW = $(window).width();
     var winH = $(window).height();
     var objW = $obj.width();
+    var isMoving = false;
 
     $(window).resize(function () {
         winW = $(window).width();
@@ -27,63 +27,80 @@
     var force;
     var acc;
     var g = 10;
-    var k = 0.5;
 
-    var powerLossFactor = 1;
-    var powerApplied = 200000;
+    var powerLossFactor = 2;
+    var powerApplied = 400000;
     var ke;
     var vmag;
     var mass;
-    var isPositive = false;
-    var direction = 'firstSide';
+    var isPositive = {};
+    var direction = 'right';
     var shiftedX = 0;
     var oldPageX = 0;
 
     window.onload = init;
 
     function init() {
-        obj = new Obj(objW, winH, m, true);
-        obj.pos2D = new Vector2D(0, 0);
-        obj.velo2D = new Vector2D(0, 0);
+        obj = new Obj({
+            $el: $obj,
+            mass: m
+        });
+        obj.pos = new Vector(0, 0);
+        obj.velo = new Vector(0, 0);
 
-        mass = obj.mass;
-        vmag = obj.velo2D.length();
-        ke = 0.5 * mass * vmag * vmag;
+        ke = new Vector(0.5 * obj.mass * obj.vx * obj.vx, 0.5 * obj.mass * obj.vy * obj.vy);
 
         t0 = new Date().getTime();
         t = 0;
-        // startAnim();
 
         startEventsNav();
+
         $obj.on('mousedown', mouseDown);
-        $obj.add($body).on('mouseup', mouseUp);
-        $obj.on('mousemove', mouseMove);
+        $.Body.add($obj).on('mouseup', mouseUp);
+        $.Body.add($obj).on('mousemove', mouseMove);
+
+        $obj.on('touchstart', mouseDown);
+        $.Body.add($obj).on('touchend', mouseUp);
+        $.Body.add($obj).on('touchmove', mouseMove);
     }
 
     function startEventsNav() {
-        $navPrev.on('mousedown', function () {
+        $navPrev.on('mousedown', navPrevActive);
+        $navNext.on('mousedown', navNextActive);
+
+        $navPrev.on('touchstart', navPrevActive);
+        $navNext.on('touchstart', navNextActive);
+
+        function navPrevActive() {
             direction = 'firstSide';
             applyThrust = true;
-            isPositive = true;
+            isPositive.x = true;
             t0 = new Date().getTime();
-            startAnim();
-        });
+            if (!isMoving) {
+                startAnim();
+            }
+        }
 
-        $navNext.on('mousedown', function () {
+        function navNextActive() {
             direction = 'secondSide';
             applyThrust = true;
-            isPositive = false;
+            isPositive.x = false;
             t0 = new Date().getTime();
-            startAnim();
-        });
+
+            if (!isMoving) {
+                startAnim();
+            }
+        }
     }
 
     function startAnim() {
+        isMoving = true;
         animId = requestAnimationFrame(startAnim);
         onTimer();
     }
 
     function stopAnimate() {
+        isMoving = false;
         cancelAnimationFrame(animId);
     }
 
@@ -91,9 +108,11 @@
     function mouseDown(evt) {
         stopAnimate();
         t0 = new Date().getTime();
-        obj.pos0 = obj.pos2D;
+        obj.pos0 = obj.pos;
         isDragging = true;
-        innerVector = new Vector2D(evt.pageX, evt.pageY);
+
+        var xy = getXY(evt);
+        innerVector = new Vector(xy[0], xy[1]);
         firstStep = obj.x;
     }
 
@@ -112,23 +131,25 @@
             return;
         }
 
-        var pageX = firstStep + evt.pageX - innerVector.x;
-        var oldPos = obj.pos2D;
+        var xy = getXY(evt);
+
+        var pageX = firstStep + xy[0] - innerVector.x;
+        var oldPos = obj.pos;
 
         shiftedX += (pageX - oldPageX);
-        obj.pos2D = new Vector2D(shiftedX, 0);
+        obj.pos = new Vector(shiftedX, 0);
 
         // Смена направления для обнуления начального положения и времени.
         // Скорость в данный момент равна 0.
-        if (obj.pos2D.isChangeDirection(oldPos, direction, 'x')) {
+        if (obj.pos.isChangeDirection(oldPos, direction, 'x')) {
             direction = (direction === 'secondSide') ? 'firstSide' : 'secondSide';
 
             t0 = new Date().getTime();
-            obj.pos0 = obj.pos2D;
+            obj.pos0 = obj.pos;
         }
 
         checkObjPos();
-        $obj.css('transform', 'translate3d(' + obj.x + 'px, 0px,0)');
+        obj.changeStyles();
         oldPageX = pageX;
     }
 
@@ -147,10 +168,18 @@
 
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.001 * (t1 - t0);
+        dt = t1 - t0;
+
+        if (dt > 15) {
+            dt = 15;
+        }
+
+        dt *= 0.001;
         t0 = t1;
-        if (dt > 0.2) {dt = 0;}; // fix for bug if user switches tabs
-        t += dt;
+
+        if (dt > 0.2) {
+            dt = 0; // Фиксит баг когда переходим в другую вкладку.
+        }
         move();
     }
 
@@ -161,42 +190,71 @@
     }
 
     function moveObject() {
-        obj.pos2D = obj.pos2D.addScaled(obj.velo2D, dt);
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
+
         checkObjPos();
-        $obj.css('transform', 'translate3d(' + obj.x + 'px, 0px,0)');
+        obj.changeStyles();
     }
 
     function applyPower() {
         if (applyThrust) {
-            ke += powerApplied * dt;
+            ke = ke.add(new Vector(powerApplied * dt, powerApplied * dt));
         }
-        ke -= powerLossFactor * vmag * vmag * dt;
 
-        if (Math.round(ke) <= 1 && !applyThrust) {
+        var powerLoss = new Vector(powerLossFactor * obj.vx * obj.vx * dt,
+                                   powerLossFactor * obj.vy * obj.vy * dt);
+        ke = ke.subtract(powerLoss);
+
+        if (Math.round(ke.x) <= 1 && Math.round(ke.y) <= 1) {
             stopAnimate();
         }
     }
 
     function updateVelo() {
-        vmag = Math.sqrt(2 * ke / mass);
-        vmag = (isPositive) ? vmag : -vmag;
-        obj.vx = vmag;
+        obj.velo = new Vector(Math.sqrt(2 * ke.x / obj.mass), 0);
+        obj.vx = (isPositive.x) ? obj.vx : -obj.vx;
     }
 
     function getVelo() {
-        obj.vx = (obj.pos2D.x - obj.pos0.x) / ((t1 - t0) * 0.001);
+        var displ = obj.pos.subtract(obj.pos0);
+        obj.velo = displ.divide((t1 - t0) * 0.001);
+
         t0 = new Date().getTime();
 
-        if (obj.vx >= 0) {
-            isPositive = true;
-        } else {
-            isPositive = false;
+        setPositive();
+
+        ke = new Vector(0.5 * obj.mass * obj.vx * obj.vx,
+                        0.5 * obj.mass * obj.vy * obj.vy);
+
+        if (!isMoving) {
+            startAnim();
+        }
+    }
+
+    function getXY(evt) {
+        var touch;
+        if ($.isTouch) {
+            touch = evt.originalEvent.touches[0] || evt.originalEvent.changedTouches[0];
         }
 
-        vmag = obj.velo2D.length();
-        vmag = (isPositive) ? vmag : -vmag;
-        ke = 0.5 * mass * vmag * vmag;
-        startAnim();
+        var x = $.isTouch ? touch.pageX : evt.pageX;
+        var y = $.isTouch ? touch.pageY : evt.pageX;
+
+        return [x, y];
+    }
+
+    function setPositive() {
+        if (obj.vy >= 0) {
+            isPositive.y = true;
+        } else {
+            isPositive.y = false;
+        }
+
+        if (obj.vx >= 0) {
+            isPositive.x = true;
+        } else {
+            isPositive.x = false;
+        }
     }
 }());
 

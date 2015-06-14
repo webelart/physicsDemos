@@ -30,8 +30,8 @@
                 params.mass = 1;
 
                 this.objs.push(new Obj(params));
-                this.objs[i].pos2D = new Vector2D(getRandomInt(-500, 500), getRandomInt(-300, 300));
-                this.objs[i].center2D = new Vector2D(0, 0);
+                this.objs[i].pos = new Vector(getRandomInt(-500, 500), getRandomInt(-300, 300));
+                this.objs[i].center = new Vector(0, 0);
                 this.objs[i].datas = newObj;
                 this.objs[i].changeStyles();
                 this.objs[i].isIncluded = false;
@@ -77,14 +77,14 @@
         },
 
         moveObject: function (obj) {
-            obj.pos2D = obj.pos2D.addScaled(obj.velo2D, this.dt);
+            obj.pos = obj.pos.addScaled(obj.velo, this.dt);
             obj.changeStyles();
         },
 
         calcForce: function (obj) {
-            var displ = obj.pos2D.subtract(obj.center2D);
+            var displ = obj.pos.subtract(obj.center);
             var restoring = Forces.spring(obj.datas.kSpring, displ);
-            var damping = Forces.damping(obj.datas.kDamping, obj.velo2D);
+            var damping = Forces.damping(obj.datas.kDamping, obj.velo);
 
             obj.force = Forces.add([restoring, damping]);
         },
@@ -94,13 +94,13 @@
         },
 
         updateVelo: function (obj) {
-            obj.velo2D = obj.velo2D.addScaled(obj.acc, this.dt);
+            obj.velo = obj.velo.addScaled(obj.acc, this.dt);
         },
 
         checkStop: function (obj) {
             // if (Math.round(obj.acc.length()) === 0 && !obj.isIncluded) {
             //     obj.isIncluded = true;
-            //     obj.pos2D = new Vector2D(0, 0);
+            //     obj.pos = new Vector(0, 0);
             //     this.closeObjs.push(obj);
             //     console.log(1)
 
@@ -133,13 +133,14 @@
     };
 
     window.onload = function () {
-        var sizeEl = 20;
-        var count = 500 / sizeEl;
+        var sizeEl = 25;
+        var countX = 650 / sizeEl;
+        var countY = 500 / sizeEl;
         var $container = $('.Container');
         var home = [];
 
-        for (var i = 0; i < count; i++) {
-            for (var j = 0; j < count; j++) {
+        for (var i = 0; i < countX; i++) {
+            for (var j = 0; j < countY; j++) {
                 var $item = $('<div class="Container-item"></div>');
                 $item.css({
                     width: sizeEl,
