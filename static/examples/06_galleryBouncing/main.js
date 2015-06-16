@@ -78,7 +78,8 @@
 
         onTimer: function () {
             var t1 = new Date().getTime();
-            this.dt = 0.001 * (t1 - this.t0);
+            // this.dt = 0.001 * (t1 - this.t0);
+            this.dt = 0.017;
             this.t0 = t1;
 
             if (this.dt > 0.5) {

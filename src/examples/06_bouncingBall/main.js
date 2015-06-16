@@ -49,7 +49,9 @@
 
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.004 * (t1 - t0);
+        // dt = 0.004 * (t1 - t0);
+        dt = 0.07;
+
         t0 = t1;
         if (dt > 0.2) {
             dt = 0;

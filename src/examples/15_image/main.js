@@ -53,10 +53,11 @@
         },
 
         onTimer: function () {
-            var t1 = new Date().getTime();
-            this.dt = 0.005 * (t1 - this.t0);
-            this.t0 = t1;
+            // var t1 = new Date().getTime();
+            // this.dt = 0.005 * (t1 - this.t0);
+            // this.t0 = t1;
 
+            this.dt = 0.14;
             if (this.dt > 0.2) {
                 this.dt = 0;
             }
@@ -102,7 +103,6 @@
             //     obj.isIncluded = true;
             //     obj.pos = new Vector(0, 0);
             //     this.closeObjs.push(obj);
-            //     console.log(1)
 
             // }
 
@@ -155,8 +155,8 @@
                     top: j * sizeEl,
                     left: i * sizeEl,
                     size: sizeEl,
-                    kSpring: getRandomInt(8, 50) / 10,
-                    kDamping: 0.1
+                    kSpring: getRandomInt(8, 30) / 10,
+                    kDamping: 0.2
                 });
 
                 $container.append($item);

@@ -37,8 +37,11 @@
     }
     function onTimer() {
         var t1 = new Date().getTime();
-        dt = 0.001 * (t1 - t0);
-        t0 = t1;
+        // dt = 0.001 * (t1 - t0);
+        // t0 = t1;
+        dt = 0.016;
+
+        console.log(dt)
         if (dt > 0.2) {dt = 0;};
         move();
     }

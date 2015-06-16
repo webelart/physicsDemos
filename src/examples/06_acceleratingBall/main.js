@@ -65,7 +65,6 @@
     function moveObject() {
         var last = obj.y;
         obj.pos = obj.pos.addScaled(obj.velo, dt);
-        console.log(obj.y - last);
         obj.changeStyles();
     }
 

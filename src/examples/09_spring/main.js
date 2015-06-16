@@ -43,6 +43,7 @@
     function onTimer() {
         var t1 = new Date().getTime();
         dt = 0.001 * (t1 - t0);
+
         t0 = t1;
         if (dt > 0.2) {dt = 0;};
         move();
