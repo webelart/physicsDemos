@@ -94,9 +94,9 @@
     }
 
     function applyPower() {
-        var powerLoss = new Vector(powerLossFactor * obj.vx * obj.vx * dt,
-                                   powerLossFactor * obj.vy * obj.vy * dt);
-        ke = ke.subtract(powerLoss);
+        var powerLoss = new Vector(-powerLossFactor * obj.vx * obj.vx * dt,
+                                   -powerLossFactor * obj.vy * obj.vy * dt);
+        ke = ke.add(powerLoss);
 
         if (Math.round(ke.x) <= 1 && Math.round(ke.y) <= 1) {
             stopAnimate();

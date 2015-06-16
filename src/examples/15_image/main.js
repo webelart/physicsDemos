@@ -84,10 +84,10 @@
 
         calcForce: function (obj) {
             var displ = obj.pos.subtract(obj.center);
-            var restoring = Forces.spring(obj.datas.kSpring, displ);
-            var damping = Forces.damping(obj.datas.kDamping, obj.velo);
+            var restoring = displ.multiply(-obj.datas.kSpring);
+            var damping = obj.velo.multiply(-obj.datas.kDamping);
 
-            obj.force = Forces.add([restoring, damping]);
+            obj.force = Vector.add([restoring, damping]);
         },
 
         updateAccel: function (obj) {
@@ -156,7 +156,7 @@
                     left: i * sizeEl,
                     size: sizeEl,
                     kSpring: getRandomInt(8, 30) / 10,
-                    kDamping: 0.2
+                    kDamping: 0.3
                 });
 
                 $container.append($item);
