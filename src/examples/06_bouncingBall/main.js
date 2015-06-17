@@ -81,7 +81,7 @@
     }
 
     function calcForce() {
-        force = new Vector2D(0, obj.mass * g - k * obj.vy);
+        force = new Vector(0, obj.mass * g - k * obj.vy);
     }
 
     function updateAccel() {
