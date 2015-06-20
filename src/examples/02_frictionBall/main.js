@@ -3,7 +3,6 @@
     var $obj = $('.ball');
     var winW = $(window).width();
     var winH = $(window).height();
-    var obj;
     var t0 = 0;
 
     var isDragging = false;
@@ -15,9 +14,6 @@
     var pos0;
     var dt;
     var animId;
-    var force;
-    var acc;
-    var g = 10;
 
     var powerLossFactor = 4;
     var powerApplied = 50;
@@ -52,10 +48,6 @@
         $obj.on('mousedown', mouseDown);
         $.Body.add($obj).on('mouseup', mouseUp);
         $.Body.add($obj).on('mousemove', mouseMove);
-
-        $obj.on('touchstart', mouseDown);
-        $.Body.add($obj).on('touchend', mouseUp);
-        $.Body.add($obj).on('touchmove', mouseMove);
     }
 
     function startAnim() {
@@ -68,15 +60,17 @@
     }
 
     function onTimer() {
-        var t1 = new Date().getTime();
-        dt = t1 - t0;
-
         dt = 0.017;
-        t0 = t1;
 
-        if (dt > 0.2) {
-            dt = 0; // Фиксит баг когда переходим в другую вкладку.
-        }
+        // var t1 = new Date().getTime();
+        // dt = t1 - t0;
+
+        // dt = 0.017;
+        // t0 = t1;
+
+        // if (dt > 0.2) {
+        //     dt = 0; // Фиксит баг когда переходим в другую вкладку.
+        // }
         move();
     }
 
@@ -114,7 +108,7 @@
         t0 = new Date().getTime();
         obj.pos0 = obj.pos;
         isDragging = true;
-        innerVector = getXY(evt, 'offset');
+        innerVector = new Vector(evt.offsetX, evt.offsetY);
     }
 
     function mouseUp() {
@@ -132,7 +126,7 @@
         }
 
         var oldPos = obj.pos;
-        var mousePos = getXY(evt, 'page');
+        var mousePos = new Vector(evt.pageX, evt.pageY);
 
         obj.pos = mousePos.subtract(innerVector);
 
@@ -153,23 +147,7 @@
         startAnim();
     }
 
-    function getXY(evt, param) {
-        var touch;
-        if ($.isTouch) {
-            touch = evt.originalEvent.touches[0] || evt.originalEvent.changedTouches[0];
-        }
-
-        var x = $.isTouch ? touch.pageX : evt[param + 'X'];
-        var y = $.isTouch ? touch.pageY : evt[param + 'Y'];
-
-        if ($.isTouch && param === 'offset') {
-            x -= obj.$el.offset().left;
-            y -= obj.$el.offset().top;
-        }
-
-        return new Vector(x, y);
-    }
-
+    // Для определения направления по осям.
     function setPositive() {
         if (obj.vy >= 0) {
             isPositive.y = true;

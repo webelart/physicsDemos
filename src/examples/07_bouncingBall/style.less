@@ -1,0 +1,35 @@
+@floorH: 40px;
+@diameterBall: 100px;
+
+body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.Ball {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate3d(0, 0, 0);
+    width: @diameterBall;
+    height: @diameterBall;
+    background: #ccc;
+    border-radius: 50%;
+    backface-visibility: hidden;
+    will-change: transform;
+    background: radial-gradient(ellipse at center,  rgba(255,255,255,1) 0%,rgba(33,154,201,1) 100%);
+}
+
+.Floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: @floorH;
+    background: rgb(35, 125, 174);
+}

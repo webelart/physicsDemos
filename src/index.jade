@@ -14,22 +14,25 @@ html(lang="ru")
     - listOfExamples.push({title: 'Вертикальный скролл', link: '/examples/04_frictionForceVert/'})
     - listOfExamples.push({title: 'Добавляем мощности', link: '/examples/05_frictionForceWithArrows/'})
     - listOfExamples.push({title: 'Ускоряющийся мячик', link: '/examples/06_acceleratingBall/'})
-    - listOfExamples.push({title: 'Прыгающий мячик', link: '/examples/06_bouncingBall/'})
-    - listOfExamples.push({title: 'Прыгающая галерея', link: '/examples/06_galleryBouncing/'})
-    //- - listOfExamples.push({title: 'Колебание', link: '/examples/09_spring/'})
-    //- - listOfExamples.push({title: 'Колебание по окружности', link: '/examples/10_springRound/'})
-    - listOfExamples.push({title: 'Колебание затухающее', link: '/examples/11_springDamping/'})
-    //- - listOfExamples.push({title: 'Логотип', link: '/examples/12_logo/'})
-    - listOfExamples.push({title: 'Логотипы', link: '/examples/13_logos/'})
-    - listOfExamples.push({title: 'Оттягивание окон', link: '/examples/14_windowSpring/'})
-    - listOfExamples.push({title: 'Собирающаяся картинка', link: '/examples/15_image/'})
-    - listOfExamples.push({title: 'Убегающий шарик', link: '/examples/16_movingOneObject/'})
-    - listOfExamples.push({title: 'Распад', link: '/examples/17_movingObjects/'})
-    //- - listOfExamples.push({title: 'Распад 2', link: '/examples/18_movingObjects2/'})
-    //- - listOfExamples.push({title: 'о_О', link: '/examples/19_movingObjects3/'})
+    - listOfExamples.push({title: 'Прыгающий мячик', link: '/examples/07_bouncingBall/'})
+    - listOfExamples.push({title: 'Прыгающая галерея', link: '/examples/08_galleryBouncing/'})
+    - listOfExamples.push({title: 'Колебание затухающее', link: '/examples/09_springDamping/'})
+    - listOfExamples.push({title: 'Логотипы', link: '/examples/10_logos/'})
+    - listOfExamples.push({title: 'Оттягивание окон', link: '/examples/11_windowSpring/'})
+    - listOfExamples.push({title: 'Собирающаяся картинка', link: '/examples/12_movingImage/'})
+    - listOfExamples.push({title: 'Распад', link: '/examples/13_movingObjects/'})
 
 
     ul.listOfExamples
       each item in listOfExamples
         li.listOfExamples__item
           a.listOfExamples__link(href=item.link)!= item.title
+
+    footer.footer
+        ul.links
+            li.links__item
+                a(href="files/presentation.pdf" class="links__link") Анимируем объекты с использованием физики в JavaScript <span class="links__note">(pdf)</span>
+            li.links__item
+                a(href="files/book.pdf" class="links__link") Physics for JavaScript Games, Animation, and Simulations <span class="links__note">(Dev Ramtal, Adrian Dobre)</span>
+            li.links__item
+                a(href="http://www.apress.com/9781430263371" class="links__link") Creating Animations and Interactions with Physical Models  <span class="links__note">(Ralph Thomas)</span>

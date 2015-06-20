@@ -18,9 +18,7 @@
         obj.velo = new Vector(60, 0);
         obj.end = new Vector(contW - 10 - $ball.width(), 0);
 
-        // setTimeout(function () {
         startAnimate();
-        // }, 3000);
     }
 
     function startAnimate() {
@@ -33,19 +31,20 @@
     }
 
     function onTimer() {
-        var t1 = new Date().getTime();
-        dt = t1 - t0;
+        dt = 0.05; // Для плавной анимации убираем четкую зависимость от времени.
+        // var t1 = new Date().getTime();
+        // dt = t1 - t0;
 
-        if (dt > 15) {
-            dt = 15;
-        }
+        // if (dt > 15) {
+        //     dt = 15;
+        // }
 
-        dt *= 0.004;
-        t0 = t1;
+        // dt *= 0.004;
+        // t0 = t1;
 
-        if (dt > 0.2) {
-            dt = 0; // Фиксит баг когда переходим в другую вкладку.
-        }
+        // if (dt > 0.2) {
+        //     dt = 0; // Фиксит баг когда переходим в другую вкладку.
+        // }
         move();
     }
 

@@ -2,7 +2,6 @@
     var $obj = $('.Ball');
 
     var obj;
-    var wall;
     var floor;
     var mass = 10;
     var g = 10;
@@ -46,12 +45,7 @@
     }
 
     function onTimer() {
-        var t1 = new Date().getTime();
         dt = 0.09;
-        t0 = t1;
-        if (dt > 0.2) {
-            dt = 0;
-        }
         move();
     }
 

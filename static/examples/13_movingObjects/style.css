@@ -1,0 +1,1 @@
+.Bg,.Squares,body{width:100%;height:100%}.Bg,.Squares,.Squares-item{position:absolute;top:0;left:0}body{font:35px/1.3em 'Marck Script',cursive,Georgia;overflow:hidden}.Squares{z-index:2}.Squares-item{background:#fff;outline:#fff solid 1px}.Bg{z-index:1;background:url(img/01.jpg)center center no-repeat;background-size:cover}

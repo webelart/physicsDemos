@@ -68,6 +68,11 @@ gulp.task('examplesCss', function() {
                .pipe(gulp.dest(baseDirExamples));
 });
 
+gulp.task('files', function() {
+    return gulp.src('src/files/**')
+               .pipe(gulp.dest(outputDir + '/files/'));
+});
+
 gulp.task('examplesJs', function() {
     return gulp.src('src/examples/**/*.js')
                .pipe(gulp.dest(baseDirExamples));
@@ -98,7 +103,7 @@ gulp.task('watch', function () {
     gulp.watch('src/examples/**/img/**', ['examplesImg']);
 });
 
-gulp.task('default', ['connect', 'commonCss', 'commonJs', 'layout', 'examplesJade', 'examplesImg', 'examplesCss', 'examplesJs', 'watch']);
+gulp.task('default', ['connect', 'commonCss', 'commonJs', 'files', 'layout', 'examplesJade', 'examplesImg', 'examplesCss', 'examplesJs', 'watch']);
 
 
 

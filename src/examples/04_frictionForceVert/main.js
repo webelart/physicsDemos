@@ -20,8 +20,6 @@
     var pos0;
     var dt;
     var animId;
-    var force;
-    var acc;
     var g = 10;
 
     var powerLossFactor = 2;
@@ -51,10 +49,6 @@
         $obj.on('mousedown', mouseDown);
         $.Body.add($obj).on('mouseup', mouseUp);
         $.Body.add($obj).on('mousemove', mouseMove);
-
-        $obj.on('touchstart', mouseDown);
-        $.Body.add($obj).on('touchend', mouseUp);
-        $.Body.add($obj).on('touchmove', mouseMove);
     }
 
     function startAnim() {
@@ -73,8 +67,7 @@
         obj.pos0 = obj.pos;
         isDragging = true;
 
-        var xy = getXY(evt);
-        innerVector = new Vector(xy[0], xy[1]);
+        innerVector = new Vector(evt.pageX, evt.pageY);
         firstStep = obj.y;
     }
 
@@ -92,9 +85,7 @@
             return;
         }
 
-        var xy = getXY(evt);
-
-        var pageY = firstStep + xy[1] - innerVector.y;
+        var pageY = firstStep + evt.pageY - innerVector.y;
         var oldPos = obj.pos;
 
         shiftedY += (pageY - oldPageY);
@@ -178,18 +169,6 @@
         ke = new Vector(0.5 * obj.mass * obj.vx * obj.vx,
                         0.5 * obj.mass * obj.vy * obj.vy);
         startAnim();
-    }
-
-    function getXY(evt) {
-        var touch;
-        if ($.isTouch) {
-            touch = evt.originalEvent.touches[0] || evt.originalEvent.changedTouches[0];
-        }
-
-        var x = $.isTouch ? touch.pageX : evt.pageX;
-        var y = $.isTouch ? touch.pageY : evt.pageY;
-
-        return [x, y];
     }
 
     function setPositive() {
