@@ -151,8 +151,8 @@
                     top: j * sizeEl,
                     left: i * sizeEl,
                     size: sizeEl,
-                    kSpring: getRandomInt(30, 50) / 10,
-                    kDamping: getRandomInt(3, 5) / 10
+                    kSpring: getRandomInt(8, 50) / 10,
+                    kDamping: 0.1
                 });
 
                 $container.append($item);
