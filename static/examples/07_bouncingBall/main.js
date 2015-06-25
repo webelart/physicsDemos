@@ -1,16 +1,21 @@
 ;(function () {
-    var $obj = $('.Ball');
+    var $obj1 = $('.Ball1');
+    var $obj2 = $('.Ball2');
 
-    var obj;
-    var floor;
-    var mass = 10;
+    var obj1;
+    var obj2;
+    var floor1;
+    var floor2;
+    var mass = 20;
     var g = 10;
     var keLoss = 0.7;
-    var k = 0.2;
+    var k = 0.1;
     var t0;
     var dt;
-    var force;
-    var acc;
+    var force1;
+    var acc1;
+    var force2;
+    var acc2;
     var animId;
     var winW = $.Window.width();
     var winH = $.Window.height();
@@ -21,15 +26,26 @@
     window.onload = initAnim;
 
     function init() {
-        obj = new Obj({
-            $el: $obj,
+        obj1 = new Obj({
+            $el: $obj1,
             mass: mass,
             radius: 100
         });
 
-        obj.pos = new Vector(winW / 2 - obj.radius, 0);
-        floor = new Vector(0, winH - floorH);
-        obj.changeStyles();
+        obj2 = new Obj({
+            $el: $obj2,
+            mass: mass,
+            radius: 100
+        });
+
+        obj1.pos = new Vector(winW / 2 - obj1.radius + 100, 0);
+        obj2.pos = new Vector(winW / 2 - obj2.radius - 100, 0);
+
+        floor1 = new Vector(0, winH - floorH);
+        floor2 = new Vector(0, winH - floorH);
+
+        obj1.changeStyles();
+        obj2.changeStyles();
     }
 
     function initAnim() {
@@ -64,27 +80,38 @@
     }
 
     function moveObject() {
-        obj.pos = obj.pos.addScaled(obj.velo, dt);
-        obj.changeStyles();
+        obj1.pos = obj1.pos.addScaled(obj1.velo, dt);
+        obj1.changeStyles();
+
+        obj2.pos = obj2.pos.addScaled(obj2.velo, dt);
+        obj2.changeStyles();
     }
 
     function checkBounce() {
-        var displ = floor.subtract(obj.pos);
-        if (displ.y - obj.radius <= 0) {
-            obj.y = floor.y - obj.radius;
-            obj.vy *= -keLoss;
+        var displ1 = floor1.subtract(obj1.pos);
+        if (displ1.y - obj1.radius <= 0) {
+            obj1.y = floor1.y - obj1.radius;
+            obj1.vy *= -keLoss;
+        }
+
+        var displ2 = floor2.subtract(obj2.pos);
+        if (displ2.y - obj2.radius <= 0) {
+            obj2.vy *= -keLoss;
         }
     }
 
     function calcForce() {
-        force = new Vector(0, obj.mass * g - k * obj.vy);
+        force1 = new Vector(0, obj1.mass * g - k * obj1.vy);
+        force2 = new Vector(0, obj2.mass * g - k * obj2.vy);
     }
 
     function updateAccel() {
-        acc = force.multiply(1 / obj.mass);
+        acc1 = force1.multiply(1 / obj1.mass);
+        acc2 = force2.multiply(1 / obj2.mass);
     }
 
     function updateVelo() {
-        obj.velo = obj.velo.addScaled(acc, dt);
+        obj1.velo = obj1.velo.addScaled(acc1, dt);
+        obj2.velo = obj2.velo.addScaled(acc2, dt);
     }
 }());
