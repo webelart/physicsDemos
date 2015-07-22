@@ -4,11 +4,15 @@
     var hoverClass = 'Bubble--hovered';
 
     var objs = [];
-    var lenObjs = 60;
-    var maxRadius = 40;
-    var minRadius = 10;
+    var lenObjs = 80;
+    var maxRadius = 50;
+    var minRadius = 5;
     var mass = 1;
     var keLoss = 1;
+
+    var mass = 20;
+    var g = 10;
+    var k = 0.1;
 
     var walls = [];
 
@@ -21,7 +25,6 @@
 
     function init() {
         createBubbles();
-        createWalls();
 
         events();
 
@@ -59,49 +62,39 @@
         var imgUrl;
 
         for (var i = 0; i < lenObjs; i++) {
-            $obj = $('<div class="Bubble"></div>');
-            radius = getRandomInt(minRadius, maxRadius);
-
-            // Рисуем объект
-            obj = new Obj({
-                $el: $obj,
-                mass: mass,
-                radius: radius
-            });
-
-            obj.pos = new Vector(Math.random() * (winW - 2 * obj.radius) + obj.radius,
-                                 Math.random() * (winH - 2 * obj.radius) + obj.radius);
-
-            obj.velo = new Vector(((Math.random() - 0.5) * 100),
-                                  ((Math.random() - 0.5) * 100));
-
-            $container.append($obj);
-            $obj
-                .width(obj.diameter)
-                .height(obj.diameter);
-
-            $obj.css({
-                top: -obj.radius,
-                left: -obj.radius
-            });
-
-            obj.changeStyles();
-            objs.push(obj);
+            createBubble();
         }
     }
 
-    function createWalls() {
-        var wall1 = new Floor({b1: new Vector(0, 0), b2: new Vector(winW, 0)});
-        walls.push(wall1);
+    function createBubble() {
+        $obj = $('<div class="Bubble"></div>');
+        radius = getRandomInt(minRadius, maxRadius);
 
-        var wall2 = new Floor({b1: new Vector(winW, 0), b2: new Vector(winW, winH)});
-        walls.push(wall2);
+        // Рисуем объект
+        obj = new Obj({
+            $el: $obj,
+            mass: mass,
+            radius: radius
+        });
 
-        var wall3 = new Floor({b1: new Vector(0, winH), b2: new Vector(winW, winH)});
-        walls.push(wall3);
+        obj.pos = new Vector(Math.random() * (winW - 2 * obj.radius) + obj.radius,
+                             winH + Math.random() * (winH - 2 * obj.radius) + obj.radius);
 
-        var wall4 = new Floor({b1: new Vector(0, 0), b2: new Vector(0, winH)});
-        walls.push(wall4);
+        obj.velo = new Vector(((Math.random() - 0.5) * 100),
+                              ((Math.random() - 0.5) * 100));
+
+        $container.append($obj);
+        $obj
+            .width(obj.diameter)
+            .height(obj.diameter);
+
+        $obj.css({
+            top: -obj.radius,
+            left: -obj.radius
+        });
+
+        obj.changeStyles();
+        objs.push(obj);
     }
 
     function getRandomInt(min, max) {
@@ -128,6 +121,9 @@
         for (var i = 0; i < lenObjs; i++){
             var obj = objs[i];
             moveObject(obj);
+            calcForce(obj);
+            updateAccel(obj);
+            updateVelo(obj);
         }
         checkCollision();
     }
@@ -184,7 +180,12 @@
 
                 }
             }
-            checkWallBounce(obj1);
+
+            if (obj1.pos.y < -100) {
+                objs.splice(i, 1);
+                obj1.$el.remove();
+                createBubble();
+            }
         }
     }
 
@@ -232,159 +233,15 @@
         }
     }
 
-    // function events() {
-    //     startMove();
-    // }
+    function calcForce(obj) {
+        force = new Vector(0, -(obj.mass * g - k * obj.vy));
+    }
 
-    // function clearAndCreateEls() {
-    //     $container.empty();
-    //     $.Body.off('mousemove');
-    //     $.Body.off('mouseleave');
-    //     stopAnimate();
-    // }
+    function updateAccel(obj) {
+        acc = force.multiply(1 / obj.mass);
+    }
 
-    // function startMove() {
-    //     createEls();
-
-    //     $.Body
-    //         .on('mousemove', mouseMove)
-    //         .on('mouseleave', mouseEnd);
-
-    //     animFrame();
-    // }
-
-    // function createEls() {
-    //     objs = [];
-
-    //     var hEl = sizeEl;
-    //     var wEl = sizeEl;
-    //     var lenW = winW / wEl + 1;
-    //     var lenH = winH / hEl + 1;
-    //     var num = 0;
-
-    //     for (var i = 0; i < lenW; i++) {
-    //         for (var j = 0; j < lenH; j++) {
-    //             var $obj = $('<div class="Squares-item" style="width: ' + hEl + 'px; height: ' + wEl + 'px;"></div>');
-
-    //             var x = wEl * i;
-    //             var y = hEl * j;
-
-    //             $container.append($obj);
-
-    //             // Задаем объект и рисуем положение объекта
-    //             var newObj = new Obj({$el: $obj});
-    //             newObj.pos = new Vector(x, y);
-    //             newObj.home = new Vector(x, y);
-    //             newObj.velo = new Vector(0, 0);
-    //             newObj.changeStyles();
-    //             newObj.force = new Vector(0, 0);
-    //             newObj.acc = new Vector(0, 0);
-
-    //             objs.push(newObj);
-    //         }
-    //     }
-
-    //     $objs = $container.find('.Squires-item');
-    // }
-
-    // function mouseMove(evt) {
-    //     cursorPos = new Vector(evt.pageX, evt.pageY);
-    //     allInHome = false;
-    // }
-
-    // function mouseEnd() {
-    //     cursorPos = new Vector(-1, -1);
-    //     allInHome = false;
-    // }
-
-    // function stopAnimate() {
-    //     setTimeout(func, 1000 / fps);
-    //     cancelAnimationFrame(animId);
-    // }
-
-    // function start() {
-    //     if (timer) {
-    //         return;
-    //     }
-
-    //     animFrame();
-    // }
-
-    // function move() {
-    //     inHome = 0;
-
-    //     for (var i = objs.length; i--;) {
-    //         var obj = objs[i];
-
-    //         calcForce(obj);
-    //         updateAccel(obj);
-    //         updateVelo(obj);
-    //         moveObjs(obj);
-    //         checkObj(obj);
-    //     }
-
-    //     allInHome = inHome == objs.length;
-    // }
-
-    // function onTimer() {
-    //     if (!objs || objs.length == 0) {
-    //         return;
-    //         stopAnimate();
-    //     }
-    //     if (!allInHome) {
-    //         dt = 0.18; /* По сути время представляет собой константу,
-    //                   которая при стабильной работе компьютера, без задержек равна примерно 17 = 1000/60 (60 кадров в секунду).
-    //                   Т.е. величина как мы видим постоянная. В примерах взято число, т.к. если вдруг компьютер не стабилен, то при
-    //                   четком расчете времени анимация прыгает, а если число, то она просто задерживается (тоже не хорошо, но выглядет менее заметно). В примере 01_movingBall
-    //                   показан в комментариях также код рассчета времени */
-    //         move();
-    //     }
-    // }
-
-    // function moveObjs(obj) {
-    //     obj.pos = obj.pos.addScaled(obj.velo, dt);
-
-    //     // Обновление стилей
-    //     obj.changeStyles();
-    // }
-
-    // function calcForce(obj) {
-    //     displObj = obj.pos.subtract(obj.home);
-
-    //     cursorForce = new Vector(0, 0);
-
-    //     if (cursorPos.x >= 0) {
-    //         displCursor = obj.pos.subtract(cursorPos);
-    //         cursorDistance = displCursor.length();
-    //         if (cursorDistance > 1 && cursorDistance <= cursorForceZoomed) {
-    //             cursorForce = displCursor.multiply(cursorForceZoomed / (cursorDistance * cursorDistance));
-    //         }
-    //     }
-
-    //     // Обновление скорости
-    //     var restoring = displObj.multiply(-kSpring);
-    //     var damping = obj.velo.multiply(-0.9);
-    //     obj.force = Vector.add([restoring, cursorForce, damping]);
-    // }
-
-    // function updateAccel(obj) {
-    //     obj.acc = obj.force.multiply(1 / m);
-    // }
-
-    // function updateVelo(obj) {
-    //     obj.velo = obj.velo.addScaled(obj.acc, dt);
-    //     // obj.velo = obj.velo.multiply(damping);
-    // }
-
-    // function checkObj(obj) {
-    //     if (Math.abs(obj.x) < 0.5 &&
-    //         Math.abs(obj.y) < 0.5 &&
-    //         Math.abs(obj.vx) < 0.5 &&
-    //         Math.abs(obj.vy) < 0.5) {
-
-    //         obj.velo = new Vector(0, 0);
-    //         obj.pos = new Vector(obj.hx, obj.hy);
-    //         inHome++;
-    //     }
-    // }
+    function updateVelo(obj) {
+        obj.velo = obj.velo.addScaled(acc, dt);
+    }
 }());
