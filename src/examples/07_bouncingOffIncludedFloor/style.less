@@ -11,11 +11,10 @@ body {
     overflow: hidden;
 }
 
-.Ball1,
-.Ball2 {
+.Ball {
     position: absolute;
     top: -@diameterBall / 2;
-    left: 0;
+    left: -@diameterBall / 2;
     transform: translate3d(0, 0, 0);
     width: @diameterBall;
     height: @diameterBall;
@@ -23,14 +22,16 @@ body {
     border-radius: 50%;
     backface-visibility: hidden;
     will-change: transform;
-    background: radial-gradient(ellipse at center,  rgba(255,255,255,1) 0%, rgba(33,154,201,1) 100%);
+    background: radial-gradient(ellipse at center,  rgba(255,255,255,1) 0%,rgba(33,154,201,1) 100%);
 }
 
 .Floor {
     position: absolute;
-    bottom: 0;
+    z-index: 10;
+    top: 0;
     left: 0;
-    width: 100%;
-    height: @floorH;
+    width: 0;
+    height: 20px;
     background: rgb(35, 125, 174);
+    transform-origin: 0 0;
 }

@@ -1,22 +1,16 @@
-
 ;(function () {
-    var $obj1 = $('.Ball1');
-    var $obj2 = $('.Ball2');
+    var $obj = $('.Ball');
 
-    var obj1;
-    var obj2;
-    var floor1;
-    var floor2;
+    var obj;
+    var floor;
     var mass = 20;
     var g = 10;
     var keLoss = 0.7;
     var k = 0.1;
     var t0;
     var dt;
-    var force1;
-    var acc1;
-    var force2;
-    var acc2;
+    var force;
+    var acc;
     var animId;
     var winW = $.Window.width();
     var winH = $.Window.height();
@@ -27,26 +21,17 @@
     window.onload = initAnim;
 
     function init() {
-        obj1 = new Obj({
-            $el: $obj1,
+        obj = new Obj({
+            $el: $obj,
             mass: mass,
-            radius: 50
+            radius: 100
         });
 
-        obj2 = new Obj({
-            $el: $obj2,
-            mass: mass,
-            radius: 50
-        });
+        obj.pos = new Vector(0, 0);
+        obj.velo = new Vector(20, 0);
+        floor = new Vector(0, winH - floorH);
 
-        obj1.pos = new Vector(winW / 2 - obj1.radius + 100, obj1.radius);
-        obj2.pos = new Vector(winW / 2 - obj2.radius - 100, obj2.radius);
-
-        floor1 = new Vector(0, winH - floorH);
-        floor2 = new Vector(0, winH - floorH);
-
-        obj1.changeStyles();
-        obj2.changeStyles();
+        obj.changeStyles();
     }
 
     function initAnim() {
@@ -81,53 +66,40 @@
     }
 
     function moveObject() {
-        obj1.pos = obj1.pos.addScaled(obj1.velo, dt);
-        obj1.changeStyles();
-
-        obj2.pos = obj2.pos.addScaled(obj2.velo, dt);
-        obj2.changeStyles();
+        obj.pos = obj.pos.addScaled(obj.velo, dt);
+        obj.changeStyles();
     }
 
     function checkBounce() {
-        var displ1 = floor1.subtract(obj1.pos);
-        if (displ1.y - obj1.radius <= 0) {
-            var floorPos = floor1.y - obj1.radius;
+        var displ = floor.subtract(obj.pos);
+        if (displ.y - obj.radius <= 0) {
+            var needPos = floor.y - obj.radius;
             // Корректируем скорость
             // Находим величину смещения
-            var deltaS = obj1.y - floorPos;
+            var deltaS = obj.y - needPos;
             // Находим дистанцию на которую нужно вернуть объект в соответствии
             // с вектором скорости, который задает нам направление. ;)
-            var deltaSVec = obj1.velo.transfer(deltaS);
+            var deltaSVec = obj.velo.unit();
+            deltaSVec.scaleBy(deltaS);
 
-            var vcor = 1 - acc1.dotProduct(deltaSVec) / obj1.velo.lengthSquared();
-            obj1.velo = obj1.velo.multiply(vcor);
+            var vcor = 1 - acc.dotProduct(deltaSVec) / obj.velo.lengthSquared();
+            obj.velo = obj.velo.multiply(vcor);
 
-            obj1.y = floorPos;
-            obj1.vy *= -keLoss;
-
-            if (obj1.velo.length() < 2) { // Проверка скорости, значение выбрано экспериментально
-                stopAnimate();
-            }
-        }
-
-        var displ2 = floor2.subtract(obj2.pos);
-        if (displ2.y - obj2.radius <= 0) {
-            obj2.vy *= -keLoss;
+            obj.y = needPos;
+            obj.vy *= -keLoss;
+            obj.vx *= keLoss;
         }
     }
 
     function calcForce() {
-        force1 = new Vector(0, obj1.mass * g - k * obj1.vy);
-        force2 = new Vector(0, obj2.mass * g - k * obj2.vy);
+        force = new Vector(0, obj.mass * g - k * obj.vy);
     }
 
     function updateAccel() {
-        acc1 = force1.multiply(1 / obj1.mass);
-        acc2 = force2.multiply(1 / obj2.mass);
+        acc = force.multiply(1 / obj.mass);
     }
 
     function updateVelo() {
-        obj1.velo = obj1.velo.addScaled(acc1, dt);
-        obj2.velo = obj2.velo.addScaled(acc2, dt);
+        obj.velo = obj.velo.addScaled(acc, dt);
     }
 }());

@@ -89,6 +89,81 @@
             this.x += vec.x;
             this.y += vec.y;
         },
+
+        perp: function (u, anticlockwise) {
+            if (typeof(anticlockwise) === 'undefined') {
+                anticlockwise = true;
+            }
+            var length = this.length();
+            var vec = new Vector(this.y, -this.x);
+            if (length > 0) {
+                if (anticlockwise){ // anticlockwise with respect to canvas coordinate system
+                    vec.scaleBy(u / length);
+                } else {
+                    vec.scaleBy(-u / length);
+                }
+            } else {
+                vec = new Vector(0, 0);
+            }
+            return vec;
+        },
+
+        projection: function (vec) {
+            var length = this.length();
+            var lengthVec = vec.length();
+            var proj;
+            if ((length == 0) || (lengthVec == 0)){
+                proj = 0;
+            }else {
+                proj = (this.x * vec.x + this.y * vec.y) / lengthVec;
+            }
+            return proj;
+        },
+
+        unit: function () {
+            var length = this.length();
+
+            if (length > 0) {
+                return new Vector(this.x / length, this.y / length);
+            } else {
+                return new Vector(0, 0);
+            }
+        },
+
+        dotProduct: function (vec) {
+            return this.x * vec.x + this.y * vec.y;
+        },
+
+        scaleBy: function (k) {
+            this.x *= k;
+            this.y *= k;
+        },
+
+        transfer: function (k) {
+            var vec = new Vector(this.x, this.y);
+            var unitVec = vec.unit();
+            unitVec.scaleBy(k);
+
+            return unitVec;
+        },
+
+        para: function (u, positive) {
+            if (typeof(positive) === 'undefined') {
+                positive = true;
+            }
+            var length = this.length();
+            var vec = new Vector(this.x, this.y);
+            if (positive){
+                vec.scaleBy(u / length);
+            } else {
+                vec.scaleBy(-u / length);
+            }
+            return vec;
+        },
+
+        project: function (vec) {
+            return vec.para(this.projection(vec));
+        },
     };
 
     Vector.add = function (arr) {
@@ -98,6 +173,10 @@
             vectorSum.incrementBy(vector);
         }
         return vectorSum;
+    };
+
+    Vector.angleBetween = function (vec1, vec2) {
+        return Math.acos(vec1.dotProduct(vec2) / (vec1.length() * vec2.length()));
     };
 
     window.Vector = Vector;

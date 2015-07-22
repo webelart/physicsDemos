@@ -1,3 +1,4 @@
+
 ;(function () {
     var $obj1 = $('.Ball1');
     var $obj2 = $('.Ball2');
@@ -29,17 +30,17 @@
         obj1 = new Obj({
             $el: $obj1,
             mass: mass,
-            radius: 100
+            radius: 50
         });
 
         obj2 = new Obj({
             $el: $obj2,
             mass: mass,
-            radius: 100
+            radius: 50
         });
 
-        obj1.pos = new Vector(winW / 2 - obj1.radius + 100, 0);
-        obj2.pos = new Vector(winW / 2 - obj2.radius - 100, 0);
+        obj1.pos = new Vector(winW / 2 - obj1.radius + 100, obj1.radius);
+        obj2.pos = new Vector(winW / 2 - obj2.radius - 100, obj2.radius);
 
         floor1 = new Vector(0, winH - floorH);
         floor2 = new Vector(0, winH - floorH);
@@ -90,8 +91,23 @@
     function checkBounce() {
         var displ1 = floor1.subtract(obj1.pos);
         if (displ1.y - obj1.radius <= 0) {
-            obj1.y = floor1.y - obj1.radius;
+            var floorPos = floor1.y - obj1.radius;
+            // Корректируем скорость
+            // Находим величину смещения
+            var deltaS = obj1.y - floorPos;
+            // Находим дистанцию на которую нужно вернуть объект в соответствии
+            // с вектором скорости, который задает нам направление. ;)
+            var deltaSVec = obj1.velo.transfer(deltaS);
+
+            var vcor = 1 - acc1.dotProduct(deltaSVec) / obj1.velo.lengthSquared();
+            obj1.velo = obj1.velo.multiply(vcor);
+
+            obj1.y = floorPos;
             obj1.vy *= -keLoss;
+
+            if (obj1.velo.length() < 2) { // Проверка скорости, значение выбрано экспериментально
+                stopAnimate();
+            }
         }
 
         var displ2 = floor2.subtract(obj2.pos);
