@@ -4,7 +4,7 @@
     var hoverClass = 'Bubble--hovered';
 
     var objs = [];
-    var lenObjs = 80;
+    var lenObjs = 200;
     var maxRadius = 50;
     var minRadius = 5;
     var mass = 1;
