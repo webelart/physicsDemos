@@ -8,5 +8,5 @@ Examples of implementing physical phenomena in JavaScript.
 
 ```bash
 npm install
-gulp
+npm start
 ```
